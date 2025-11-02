@@ -1,5 +1,8 @@
 #include "avatarTranstexhterJsonCore.h"
 
+
+avatarTranstexhterJsonCore tester = avatarTranstexhterJsonCore();
+
 void setup() {
   // put your setup code here, to run once:
 

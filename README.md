@@ -33,7 +33,7 @@
     "left-shoulder-roll":　左肩ロール軸動作角度(int: [°]),
     "right-motor-speed": 右モーター回転速度(int: ),
     "left-motor-speed": 左モーター回転速度(int: ),
-    "poseType": ポーズタイプ(typedef poseType: ROOT or STATE or POSE or NONE)
+    "poseType": ポーズタイプ(enum poseType: ROOT or STATE or POSE or NONE)
 }
 ```
 ### モーション情報
