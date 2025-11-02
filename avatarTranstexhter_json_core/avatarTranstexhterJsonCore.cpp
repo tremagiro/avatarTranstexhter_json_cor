@@ -1,13 +1,13 @@
 #include "avatarTranstexhterJsonCore.h"
 
 // saveJsonへオブジェクトを渡す
-int avatarTranstexhterJsonCore::setJsonObject(JsonObject saveJsonObject, String* errorKey){
+int avatarTranstexhterJsonCore::setJsonDocument(JsonDocument saveJsonObject, String* errorKey){
   return 0;
 }
 
 // 持っているJsonオブジェクトを渡す
-JsonObject avatarTranstexhterJsonCore::getJsonObject(){
-  return saveJson;
+JsonDocument avatarTranstexhterJsonCore::getJsonDocument(){
+  return saveJsonDoc;
 }
 
 // ポーズの有無
@@ -17,6 +17,24 @@ bool avatarTranstexhterJsonCore::isPose(String poseKey){
 
 // ポーズ情報を追加・上書きする
 bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int value){
+  // 指定の関節キーが存在しない
+  bool isJointKey = false;
+  for(int i=0;i<JOINT_TOTAL;i++){
+    if(jointKey.equals(jointKeys[i].c_str()) == true){
+      isJointKey = true;
+      break;
+    }
+  }
+  if(isJointKey == false){
+    // 存在しない関節キーを指定したため終了
+    return false;
+  }
+  // 指定のポーズは存在するか
+  if(isPose(poseKey) == false){
+    // 新規作成
+    initJson();
+  }
+  // 指定のキーの値を更新
   return true;
 }
 
@@ -112,4 +130,35 @@ bool avatarTranstexhterJsonCore::addMotion(String motionKey, String startPose, i
 // モーションを削除する
 void removeMotion(String motionKey){
 
+}
+
+// JSONファイル作成
+void avatarTranstexhterJsonCore::initJson(){
+  // リセット
+  saveJsonDoc.clear();
+  // 型作成
+  saveJsonDoc[POSE_KEY].to<JsonArray>();
+  saveJsonDoc[MOTION_KEY].to<JsonArray>();
+  // ポーズ情報
+  JsonArray poseArray = saveJsonDoc[POSE_KEY];
+  JsonObject poseNameObj = poseArray.add<JsonObject>();
+  poseNameObj[POSE_NAME_KEY] = "root";
+  JsonObject poseValueObj = poseNameObj[POSE_VALUE_KEY].to<JsonObject>();
+  for(int i=0;i<JOINT_TOTAL;i++){
+    poseValueObj[jointKeys[i]] = 0;
+  }
+  poseValueObj[MOTION_TYPE_KEY] = ROOT;
+  // モーション情報
+  JsonArray motionArray = saveJsonDoc[MOTION_KEY];
+  JsonObject motionNameObj = motionArray.add<JsonObject>();
+  motionNameObj[MOTION_NAME_KEY] = "init";
+  JsonObject motionValueObj = motionNameObj[MOTION_ARRAY_KEY].to<JsonObject>();
+  for(int i=0;i<2;i++){
+    motionValueObj[MOTION_POSE_KEY] = "root";
+    motionValueObj[MOVE_TIME_KEY] = 0;
+    motionValueObj[EYE_TYPE_KEY] = 0;
+    motionValueObj[BLINK_EYE_KEY] = 1000;
+    motionValueObj[MOUTH_TYPE_KEY] = 0;
+    motionValueObj[BLINK_MOUTH_KEY] = 1000;
+  }
 }

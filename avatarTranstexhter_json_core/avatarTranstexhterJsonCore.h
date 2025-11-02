@@ -3,7 +3,21 @@
 
 // ジョイントの総数
 #define JOINT_TOTAL 15
-// ポーズの種類
+// JOSNファイルキー
+#define POSE_KEY  "pose"
+#define MOTION_KEY  "motion"
+#define POSE_NAME_KEY  "poseName"
+#define POSE_VALUE_KEY  "poseValue"
+#define MOTION_NAME_KEY "motionName"
+#define MOTION_TYPE_KEY "poseType"
+#define MOTION_ARRAY_KEY  "motionArrayKey"
+#define MOTION_POSE_KEY  "motionPose"
+#define MOVE_TIME_KEY  "moveTime"
+#define EYE_TYPE_KEY  "eyeType"
+#define BLINK_EYE_KEY "blinkEyeTime"
+#define MOUTH_TYPE_KEY "mouthType"
+#define BLINK_MOUTH_KEY "blinkMouthTime"
+
 enum poseType{ROOT, STATE, POSE, NONE};
 // ジョイントのキー
 static const String jointKeys[JOINT_TOTAL] = {
@@ -26,12 +40,17 @@ static const String jointKeys[JOINT_TOTAL] = {
 
 class avatarTranstexhterJsonCore{
   private:
-    JsonObject saveJson;
+    JsonDocument saveJsonDoc;
+    void initJson();
   public:
+    avatarTranstexhterJsonCore(){
+      // 初期化
+      initJson();
+    }
     // saveJsonへオブジェクトを渡す
-    int setJsonObject(JsonObject saveJsonObject, String* errorKey);
+    int setJsonDocument(JsonDocument saveJsonDocument, String* errorKey);
     // 持っているJsonオブジェクトを渡す
-    JsonObject getJsonObject();
+    JsonDocument getJsonDocument();
     // ポーズの有無
     bool isPose(String poseKey);
     // ポーズ情報を追加・上書きする

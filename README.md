@@ -56,9 +56,9 @@
 ```
 ## メソッド
 ### setJsonObject
-インスタンスにJSONオブジェクトを渡すと保持する。また保持するJSONオブジェクトがテンプレートに沿ったJSONオブジェクトか判断する。テンプレートに沿っていない行数を返し、また沿っていない箇所のキーを渡したString型のポインタに格納する。テンプレート違反がない場合は0を返し、ポインタには「None」を格納する。
+インスタンスにJSONオブジェクトを渡すと保持する。
 ```
-int isMatchTemplate(JsonObject saveJsonObject, String* errorKey)
+void isMatchTemplate(JsonObject saveJsonObject)
 ```
 ### getJsonObject
 インスタンスで保持しているJSONオブジェクトを渡す。
