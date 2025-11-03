@@ -248,12 +248,20 @@ int avatarTranstexhterJsonCore::getMotionMouthBlinkTime(String motionKey, int in
 
 // モーションのポーズ総数を取得する
 int avatarTranstexhterJsonCore::getMotionIndexes(String motionKey){
+  JsonArray arrayObj;
+  if(getMotionJson(motionKey, &arrayObj) == true){
+    return arrayObj.size();
+  }
   return 0;
 }
 
 // モーション総数と全モーション名を取得する
 int avatarTranstexhterJsonCore::wholeMotion(std::vector<String>& motionKeys){
-  return 0;
+  JsonArray allMotions = saveJsonDoc[MOTION_KEY];
+  for(JsonObject motionNameObj : allMotions){
+    motionKeys.push_back(motionNameObj[MOTION_NAME_KEY].as<String>());
+  }
+  return motionKeys.size();
 }
 
 // モーションを追加する

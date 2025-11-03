@@ -121,7 +121,22 @@ void setup() {
   Serial.printf("initMotion eyeBlinkTime:%d\n", tester.getMotionEyeBlinkTime("initMotion", 0));
   Serial.printf("initMotion mouthType%d\n", tester.getMotionMouthType("initMotion", 0));
   Serial.printf("initMotion mouthBlinkTime:%d\n", tester.getMotionMouthBlinkTime("initMotion", 0));
+  Serial.printf("initMotion ポーズ総数:%d\n", tester.getMotionIndexes("initMotion"));
   Serial.println("###################################");
+  // addMotionテスト
+  Serial.println("addMotion test#######################");
+  // tester.setMotion("initMotion", 0, "add0", 1000, 0, 0, 0, 0);
+  // serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // モーション総数取得
+  Serial.println("get Motion times Infos#######################");
+  std::vector<String> motionKeys;
+  Serial.printf("モーション総数:%d\n", tester.wholeMotion(motionKeys));
+  for(String s : motionKeys){
+    Serial.println(s);
+  }
+  Serial.println("###################################");
+
 }
 
 void loop() {}
