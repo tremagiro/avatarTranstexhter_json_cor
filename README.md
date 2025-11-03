@@ -114,14 +114,14 @@ bool removePose(String poseKey)
 bool isMotion(String motionKey)
 ```
 ### setMotion
-モーション情報をインスタンスに保持するJSONオブジェクトに追加する。もし指定したモーション名がある場合は指定した関節キーの値を上書きする。該当するポーズ名がない場合、渡したポーズタイプが「POSE」でない場合はfalseを返す。また、indexで指定した箇所にモーション情報が追加される。もしindexが指定したモーション数より超過した数を代入した場合は、配列の最後尾より一つ前に追加される。
+モーション情報を更新する。該当するポーズ名がない場合、渡したポーズタイプが「POSE」でない場合はfalseを返す。また、indexが既存のモーション情報を超えるような場所を指定した際はfalaseを返す。追加する場合はaddMotionを用いてのみ実施可能とする。
 ```
 bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMotuTime)
 ```
-### getMotionName
+### getMotionPoseName
 指定したモーションのポーズ名を返す。指定したモーションが該当しない場合は「””」を返す。
 ```
-String getMotionName(String motionKey, int index)
+String getMotionPoseName(String motionKey, int index)
 ```
 ### getMotionMoveTime
 指定したモーションの稼働時間を返す。指定したモーションが該当しない場合は「0」を返す。

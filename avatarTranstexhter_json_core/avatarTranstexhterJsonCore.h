@@ -49,7 +49,8 @@ class avatarTranstexhterJsonCore{
     void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     bool getPoseJson(String poseKey, JsonObject* obj);
     bool getJointJson(String poseKey, JsonObject* obj);
-    bool getMotionJson(String motionKey, JsonObject* obj);
+    bool getMotionJson(String motionKey, JsonArray* obj);
+    bool getMotionJson(String motionKey, int index, JsonObject* obj);
   public:
     avatarTranstexhterJsonCore(){
       // 初期化
@@ -78,9 +79,9 @@ class avatarTranstexhterJsonCore{
     // モーションの有無
     bool isMotion(String motionKey);
     // モーション情報をセットする
-    bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMotuTime);
+    bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     // モーション名を取得する
-    String getMotionName(String motionKey, int index);
+    String getMotionPoseName(String motionKey, int index);
     // モーション稼働時間を取得する
     int getMotionMoveTime(String motionKey, int index);
     // 実行アイモーションを取得する

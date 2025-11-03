@@ -60,7 +60,6 @@ const char initialJson[] PROGMEM = R"(
 )";
 
 void setup() {
-  delay(5000);
   Serial.begin(115200);
   while (!Serial) {
     delay(10);
@@ -103,11 +102,11 @@ void setup() {
   tester.removePose("add0");
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
-  // // setMotionテスト
-  // Serial.println("setMotion test#######################");
-  // tester.setMotion("add0", "right-shoulder-roll", 100);
-  // serializeJsonPretty(tester.getJsonDocument(), Serial);
-  // Serial.println("###################################");
+  // setMotionテスト
+  Serial.println("setMotion test#######################");
+  tester.setMotion("initMotion", 0, "add0", 1000, 0, 0, 0, 0);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
 }
 
 void loop() {}

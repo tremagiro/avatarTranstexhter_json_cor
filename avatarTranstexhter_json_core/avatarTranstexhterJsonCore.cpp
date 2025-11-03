@@ -61,7 +61,7 @@ bool avatarTranstexhterJsonCore::setPoseType(String poseKey, poseType value){
       int max = wholePose(poseKeys);
       for(const String& key : poseKeys){
         if(getPoseType(key) == ROOT){
-          setPoseType(key, POSE);
+          setPoseType(key, STATE);
         }
       }
     }
@@ -128,18 +128,53 @@ bool avatarTranstexhterJsonCore::removePose(String poseKey){
 
 // モーションの有無
 bool avatarTranstexhterJsonCore::isMotion(String motionKey){
-  JsonObject obj;
+  JsonArray obj;
   return getMotionJson(motionKey, &obj);
 }
 
 // モーション情報をセットする
-bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMotuTime){
+bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+  // JsonObject motionObj;
+  // getMotionJson(motionKey, index, &motionObj);
+  // serializeJsonPretty(motionObj, Serial);
+  // return true;
+  // 指定したモーションがあるか確認
+  if(isMotion(motionKey) == false){
+    return false;
+  }
+  JsonArray motionArray;
+  getMotionJson(motionKey, &motionArray);
+  if(index < motionArray.size()){
+    // 既存データに上書き
+    // 末尾と最初は「STATE」か「ROOT」である必要がある
+    if(index == 0 || index == (motionArray.size() - 1)){
+      poseType type = getPoseType(poseName);
+      if(type != ROOT && type != STATE){
+        return false;
+      }
+    }
+    // 上書き
+    JsonObject updateMotion;
+    getMotionJson(motionKey, index, &updateMotion);
+    JsonObject updateObj = updateMotion[MOTION_VALUE_KEY].as<JsonObject>();
+    updateObj[MOTION_POSE_KEY] = poseName;
+    updateObj[MOVE_TIME_KEY] = moveTime;
+    updateObj[EYE_TYPE_KEY] = eyeType;
+    updateObj[BLINK_EYE_KEY] = blinkEyeTime;
+    updateObj[MOUTH_TYPE_KEY] = mouthType;
+    updateObj[BLINK_MOUTH_KEY] = blinkMouthTime;
+  }else{
+    return false;
+  }
   return true;
 }
 
 // モーション名を取得する
-String avatarTranstexhterJsonCore::getMotionName(String motionKey, int index){
-  return "";
+String avatarTranstexhterJsonCore::getMotionPoseName(String motionKey, int index){
+  JsonObject poseInfo;
+  getMotionJson(motionKey, index, &poseInfo);
+  JsonObject poseName = poseInfo[MOTION_VALUE_KEY].as<JsonObject>();
+  return poseName[MOTION_POSE_KEY].as<String>();
 }
 
 // モーション稼働時間を取得する
@@ -271,13 +306,26 @@ bool avatarTranstexhterJsonCore::getJointJson(String poseKey, JsonObject* obj){
 }
 
 // モーションの編集対象を渡す
-bool avatarTranstexhterJsonCore::getMotionJson(String motionKey, JsonObject* obj){
+bool avatarTranstexhterJsonCore::getMotionJson(String motionKey, JsonArray* obj){
   JsonArray poseArray = saveJsonDoc[MOTION_KEY];
   for(JsonObject motionObj : poseArray){
     if(motionObj[MOTION_NAME_KEY].as<String>() == motionKey){
-      *obj = motionObj;
+      *obj = motionObj[MOTION_ARRAY_KEY];
       return true;
     }
   }
   return false;
+}
+
+bool avatarTranstexhterJsonCore::getMotionJson(String motionKey, int index, JsonObject* obj){
+  JsonArray arrayObj ;
+  if(getMotionJson(motionKey, &arrayObj) == false){
+    return false;
+  }else{
+    if(index < 0 || index > (arrayObj.size() - 1)){
+      return false;
+    }
+    *obj = arrayObj[index].as<JsonObject>();
+    return true;
+  }
 }
