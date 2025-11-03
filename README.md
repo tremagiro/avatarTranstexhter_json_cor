@@ -1,5 +1,11 @@
 # AvatarTranstexhter_json_core
 アバタートランステクターの保存形式や取得、書き込み手段を提供するライブラリ。
+
+## 依存ライブラリ
+* ArduinoJson(https://arduinojson.org/?utm_source=meta&utm_medium=library.properties)
+
+    Ver 7.4.2で動作確認済み
+
 ## JSON構造
 ### 全体構造
 ```
