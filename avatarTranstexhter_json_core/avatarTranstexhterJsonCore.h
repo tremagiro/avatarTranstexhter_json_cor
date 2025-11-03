@@ -69,9 +69,9 @@ class avatarTranstexhterJsonCore{
     // ポーズの総数と全キーを返す
     int wholePose(std::vector<String>& poseKeys);
     // ポーズを追加する
-    void addPose(String poseKey, poseType type = POSE);
+    bool addPose(String poseKey, poseType type = POSE);
     // ポーズを削除する
-    void removePose(String poseKey);
+    bool removePose(String poseKey);
     // モーションの有無
     bool isMotion(String motionKey);
     // モーション情報をセットする

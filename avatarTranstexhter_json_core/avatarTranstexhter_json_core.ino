@@ -22,8 +22,23 @@ void setup() {
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
   // setPoseTypeテスト
-  Serial.println("setPose test 2#######################");
+  Serial.println("setPoseType test #######################");
   tester.setPoseType("add0", ROOT);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // addPoseテスト
+  Serial.println("addPose test #######################");
+  tester.addPose("add2", STATE);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // removePoseテスト1 
+  Serial.println("addPose test 1#######################");
+  tester.removePose("add2");
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // removePoseテスト2
+  Serial.println("addPose test 2#######################");
+  tester.removePose("add0");
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
 }

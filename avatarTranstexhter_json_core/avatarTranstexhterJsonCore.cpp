@@ -97,13 +97,33 @@ int avatarTranstexhterJsonCore::wholePose(std::vector<String>& poseKeys){
 }
 
 // ポーズを追加する
-void avatarTranstexhterJsonCore::addPose(String poseKey, poseType type){
-
+bool avatarTranstexhterJsonCore::addPose(String poseKey, poseType type){
+  // 既存のポーズがある場合は追加しない
+  if(isPose(poseKey) == false){
+    addPoseJson(poseKey, type);
+    return true;
+  }
+  return false;
 }
 
 // ポーズを削除する
-void avatarTranstexhterJsonCore::removePose(String poseKey){
-
+bool avatarTranstexhterJsonCore::removePose(String poseKey){
+  // ポーズが存在するか確認
+  if(isPose(poseKey) == true){
+    // ROOTではないか確認
+    if(getPoseType(poseKey) != ROOT){
+      // 削除
+      JsonArray poseArray = saveJsonDoc[POSE_KEY];
+      for (int i = 0; i < poseArray.size(); i++) {
+        JsonObject poseObj = poseArray[i].as<JsonObject>();
+        if (poseObj[POSE_NAME_KEY].as<String>() == poseKey) {
+          poseArray.remove(i);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 // モーションの有無
