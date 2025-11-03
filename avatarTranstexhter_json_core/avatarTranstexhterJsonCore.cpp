@@ -1,8 +1,8 @@
 #include "avatarTranstexhterJsonCore.h"
 
 // saveJsonへオブジェクトを渡す
-int avatarTranstexhterJsonCore::setJsonDocument(JsonDocument saveJsonObject, String* errorKey){
-  return 0;
+void avatarTranstexhterJsonCore::setJsonDocument(JsonDocument saveJsonObject){
+  saveJsonDoc = saveJsonObject;
 }
 
 // 持っているJsonオブジェクトを渡す
@@ -47,7 +47,29 @@ bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int va
 
 // ポーズタイプを追加・上書きする
 bool avatarTranstexhterJsonCore::setPoseType(String poseKey, poseType value){
-  return true;
+  // 指定のポーズは存在するか
+  if(isPose(poseKey) == false){
+    // 新規作成
+    addPoseJson(poseKey, POSE);
+  }
+  // 指定のキーの値を更新
+  JsonObject updateJsonObj;
+  if(getJointJson(poseKey, &updateJsonObj) == true){
+    if(value == ROOT){
+      // ROOTは重複させない
+      std::vector<String> poseKeys;
+      int max = wholePose(poseKeys);
+      for(const String& key : poseKeys){
+        if(getPoseType(key) == ROOT){
+          setPoseType(key, POSE);
+        }
+      }
+    }
+    updateJsonObj[POSE_TYPE_KEY] = value;
+    return true;
+  }else{
+    return false;
+  }
 }
 
 // ポーズ情報を取得する
@@ -57,12 +79,21 @@ int avatarTranstexhterJsonCore::getPose(String poseKey, String jointKey, int val
 
 // ポーズタイプを取得する
 poseType avatarTranstexhterJsonCore::getPoseType(String poseKey){
-  return POSE;
+  JsonObject poseObj;
+  if (getPoseJson(poseKey, &poseObj) == true){
+    JsonObject poseValue = poseObj[POSE_VALUE_KEY].as<JsonObject>();
+    return static_cast<poseType>(poseValue[POSE_TYPE_KEY].as<int>());
+  }
+  return NONE;
 }
 
 // ポーズの総数と全キーを返す
-int avatarTranstexhterJsonCore::wholePose(String* poseKeys){
-  return 0;
+int avatarTranstexhterJsonCore::wholePose(std::vector<String>& poseKeys){
+  JsonArray poseArray = saveJsonDoc[POSE_KEY];
+  for(JsonObject poseObj : poseArray){
+    poseKeys.push_back(poseObj[POSE_NAME_KEY].as<String>());
+  }
+  return poseKeys.size();
 }
 
 // ポーズを追加する
@@ -121,7 +152,7 @@ int avatarTranstexhterJsonCore::getMotionIndexes(String motionKey){
 }
 
 // モーション総数と全モーション名を取得する
-int avatarTranstexhterJsonCore::wholeMotion(String* motionKeys){
+int avatarTranstexhterJsonCore::wholeMotion(std::vector<String>& motionKeys){
   return 0;
 }
 
@@ -162,7 +193,7 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
   for(int i=0;i<JOINT_TOTAL;i++){
     poseValueObj[jointKeys[i]] = 0;
   }
-  poseValueObj[MOTION_TYPE_KEY] = type;
+  poseValueObj[POSE_TYPE_KEY] = type;
 }
 
 // モーションの追加

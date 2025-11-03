@@ -93,7 +93,7 @@ poseType getPoseType(String poseKey)
 ### wholePose
 インスタンスが保持する全ポーズ数を返す。また、渡したString型ポインタに全ポーズ名を渡す。
 ```
-int wholePose(String* poseKeys)
+int wholePose(std::vector<String>& poseKeys)
 ```
 ### addPose
 ポーズを追加する。
@@ -154,7 +154,7 @@ int getMotionIndexes(String motionKey)
 ### wholeMotion
 インスタンスが保持する全モーション数を返す。また、渡したString型ポインタに全モーション名を渡す。
 ```
-int wholeMotion(String* motionKeys)
+int wholeMotion(std::vector<String>& motionKeys)
 ```
 ### addMotion
 モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。

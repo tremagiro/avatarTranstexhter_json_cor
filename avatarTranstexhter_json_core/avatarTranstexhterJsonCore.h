@@ -1,5 +1,6 @@
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
+#include <vector>
 
 // ジョイントの総数
 #define JOINT_TOTAL 15
@@ -9,7 +10,7 @@
 #define POSE_NAME_KEY  "poseName"
 #define POSE_VALUE_KEY  "poseValue"
 #define MOTION_NAME_KEY "motionName"
-#define MOTION_TYPE_KEY "poseType"
+#define POSE_TYPE_KEY "poseType"
 #define MOTION_ARRAY_KEY  "motionArrayKey"
 #define MOTION_POSE_KEY  "motionPose"
 #define MOVE_TIME_KEY  "moveTime"
@@ -52,7 +53,7 @@ class avatarTranstexhterJsonCore{
       initJson();
     }
     // saveJsonへオブジェクトを渡す
-    int setJsonDocument(JsonDocument saveJsonDocument, String* errorKey);
+    void setJsonDocument(JsonDocument saveJsonDocument);
     // 持っているJsonオブジェクトを渡す
     JsonDocument getJsonDocument();
     // ポーズの有無
@@ -66,7 +67,7 @@ class avatarTranstexhterJsonCore{
     // ポーズタイプを取得する
     poseType getPoseType(String poseKey);
     // ポーズの総数と全キーを返す
-    int wholePose(String* poseKeys);
+    int wholePose(std::vector<String>& poseKeys);
     // ポーズを追加する
     void addPose(String poseKey, poseType type = POSE);
     // ポーズを削除する
@@ -90,7 +91,7 @@ class avatarTranstexhterJsonCore{
     // モーションのポーズ総数を取得する
     int getMotionIndexes(String motionKey);
     // モーション総数と全モーション名を取得する
-    int wholeMotion(String* motionKeys);
+    int wholeMotion(std::vector<String>& motionKeys);
     // モーションを追加する
     bool addMotion(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     bool addMotion(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
