@@ -30,14 +30,30 @@ const char initialJson[] PROGMEM = R"(
   "motion": [
     {
       "motionName": "initMotion",
-      "motionArrayKey": {
-        "motionPose": "root",
-        "moveTime": 0,
-        "eyeType": 0,
-        "blinkEyeTime": 0,
-        "mouthType": 0,
-        "blinkMouthTime": 0
-      }
+      "motionArrayKey": [
+        {
+          "motionNameTurn": "initMotionStart",
+          "motionValue": {
+            "motionPose": "root",
+            "moveTime": 0,
+            "eyeType": 0,
+            "blinkEyeTime": 0,
+            "mouthType": 0,
+            "blinkMouthTime": 0
+          }
+        },
+        {
+          "motionNameTurn": "initMotionFinish",
+          "motionValue": {
+            "motionPose": "root",
+            "moveTime": 0,
+            "eyeType": 0,
+            "blinkEyeTime": 0,
+            "mouthType": 0,
+            "blinkMouthTime": 0
+          }
+        }
+      ]
     }
   ]
 }
@@ -49,6 +65,8 @@ void setup() {
   while (!Serial) {
     delay(10);
   }
+  // serializeJsonPretty(tester.getJsonDocument(), Serial);
+  // Serial.println("###################################");
   // setJsonDocument・getJsonDocumentのテスト
   JsonDocument initJsonDoc;
   deserializeJson(initJsonDoc, initialJson);
@@ -85,6 +103,11 @@ void setup() {
   tester.removePose("add0");
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
+  // // setMotionテスト
+  // Serial.println("setMotion test#######################");
+  // tester.setMotion("add0", "right-shoulder-roll", 100);
+  // serializeJsonPretty(tester.getJsonDocument(), Serial);
+  // Serial.println("###################################");
 }
 
 void loop() {}

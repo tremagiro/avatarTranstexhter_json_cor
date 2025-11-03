@@ -18,6 +18,8 @@
 #define BLINK_EYE_KEY "blinkEyeTime"
 #define MOUTH_TYPE_KEY "mouthType"
 #define BLINK_MOUTH_KEY "blinkMouthTime"
+#define MOTION_NAME_TURN_KEY "motionNameTurn"
+#define MOTION_VALUE_KEY "motionValue"
 
 enum poseType{ROOT, STATE, POSE, NONE};
 // ジョイントのキー
@@ -47,6 +49,7 @@ class avatarTranstexhterJsonCore{
     void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     bool getPoseJson(String poseKey, JsonObject* obj);
     bool getJointJson(String poseKey, JsonObject* obj);
+    bool getMotionJson(String motionKey, JsonObject* obj);
   public:
     avatarTranstexhterJsonCore(){
       // 初期化
@@ -93,8 +96,10 @@ class avatarTranstexhterJsonCore{
     // モーション総数と全モーション名を取得する
     int wholeMotion(std::vector<String>& motionKeys);
     // モーションを追加する
-    bool addMotion(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
-    bool addMotion(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+    bool addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+    bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+    // 指定したインデックスのモーションを削除する
+    void removeMotion(String motionKey, int index);
     // モーションを削除する
-    void removeMotion(String motionKey);
+    void removeMotions(String motionKey);
 };

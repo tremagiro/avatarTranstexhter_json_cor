@@ -128,7 +128,8 @@ bool avatarTranstexhterJsonCore::removePose(String poseKey){
 
 // モーションの有無
 bool avatarTranstexhterJsonCore::isMotion(String motionKey){
-  return true;
+  JsonObject obj;
+  return getMotionJson(motionKey, &obj);
 }
 
 // モーション情報をセットする
@@ -177,16 +178,21 @@ int avatarTranstexhterJsonCore::wholeMotion(std::vector<String>& motionKeys){
 }
 
 // モーションを追加する
-bool avatarTranstexhterJsonCore::addMotion(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
   return true;
 }
 
-bool avatarTranstexhterJsonCore::addMotion(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
-  return addMotion(motionKey, startPose, startPose, eyeType, blinkEyeTime, mouthType, blinkMouthTime);
+bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+  return addMotions(motionKey, startPose, startPose, eyeType, blinkEyeTime, mouthType, blinkMouthTime);
+}
+
+// 指定したインデックスのモーションを削除する
+void avatarTranstexhterJsonCore::removeMotion(String motionKey, int index){
+
 }
 
 // モーションを削除する
-void removeMotion(String motionKey){
+void avatarTranstexhterJsonCore::removeMotions(String motionKey){
 
 }
 
@@ -218,17 +224,25 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
 
 // モーションの追加
 void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
-  JsonArray motionArray = saveJsonDoc[MOTION_KEY];
-  JsonObject motionNameObj = motionArray.add<JsonObject>();
-  motionNameObj[MOTION_NAME_KEY] = motionKey;
-  JsonObject motionValueObj = motionNameObj[MOTION_ARRAY_KEY].to<JsonObject>();
+  JsonArray motionsArray = saveJsonDoc[MOTION_KEY];
+  JsonObject motionObj = motionsArray.add<JsonObject>();
+  motionObj[MOTION_NAME_KEY] = motionKey;
+  JsonArray motionStepArray = motionObj[MOTION_ARRAY_KEY].to<JsonArray>();
+  // 最初と最後の動作追加
   for(int i=0;i<2;i++){
-    motionValueObj[MOTION_POSE_KEY] = startPose;
-    motionValueObj[MOVE_TIME_KEY] = 0;
-    motionValueObj[EYE_TYPE_KEY] = eyeType;
-    motionValueObj[BLINK_EYE_KEY] = blinkEyeTime;
-    motionValueObj[MOUTH_TYPE_KEY] = mouthType;
-    motionValueObj[BLINK_MOUTH_KEY] = blinkMouthTime;
+    JsonObject stepObj = motionStepArray.add<JsonObject>();
+    if(i == 0){
+      stepObj[MOTION_NAME_TURN_KEY] = motionKey + "Start";
+    }else{
+      stepObj[MOTION_NAME_TURN_KEY] = motionKey + "Finish";
+    }
+    JsonObject motionValue = stepObj[MOTION_VALUE_KEY].to<JsonObject>();
+    motionValue[MOTION_POSE_KEY] = startPose;
+    motionValue[MOVE_TIME_KEY] = 0;
+    motionValue[EYE_TYPE_KEY] = eyeType;
+    motionValue[BLINK_EYE_KEY] = 0;
+    motionValue[MOUTH_TYPE_KEY] = mouthType;
+    motionValue[BLINK_MOUTH_KEY] = 0;
   }
 }
 
@@ -250,6 +264,18 @@ bool avatarTranstexhterJsonCore::getJointJson(String poseKey, JsonObject* obj){
   for(JsonObject poseObj : poseArray){
     if(poseObj[POSE_NAME_KEY] == poseKey){
       *obj = poseObj[POSE_VALUE_KEY].as<JsonObject>();
+      return true;
+    }
+  }
+  return false;
+}
+
+// モーションの編集対象を渡す
+bool avatarTranstexhterJsonCore::getMotionJson(String motionKey, JsonObject* obj){
+  JsonArray poseArray = saveJsonDoc[MOTION_KEY];
+  for(JsonObject motionObj : poseArray){
+    if(motionObj[MOTION_NAME_KEY].as<String>() == motionKey){
+      *obj = motionObj;
       return true;
     }
   }
