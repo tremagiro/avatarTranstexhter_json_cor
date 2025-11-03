@@ -101,7 +101,7 @@ class avatarTranstexhterJsonCore{
     bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     bool addMotion(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     // 指定したインデックスのモーションを削除する
-    void removeMotion(String motionKey, int index);
+    bool removeMotion(String motionKey, int index);
     // モーションを削除する
     void removeMotions(String motionKey);
 };

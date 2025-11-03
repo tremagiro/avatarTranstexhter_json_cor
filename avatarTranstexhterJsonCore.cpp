@@ -310,7 +310,7 @@ bool avatarTranstexhterJsonCore::addMotion(String motionKey, String poseName, in
 }
 
 // 指定したインデックスのモーションを削除する
-void avatarTranstexhterJsonCore::removeMotion(String motionKey, int index){
+bool avatarTranstexhterJsonCore::removeMotion(String motionKey, int index){
   if(isMotion(motionKey) == true){
     if(index < getMotionIndexes(motionKey)){
       JsonArray editArray;
@@ -318,9 +318,11 @@ void avatarTranstexhterJsonCore::removeMotion(String motionKey, int index){
       // 先頭・末尾も削除禁止
       if(index != 0 && index != (editArray.size() - 1)){
         editArray.remove(index);
+        return true;
       }
     }
   }
+  return false;
 }
 
 // モーションを削除する
