@@ -1,7 +1,47 @@
 #include "avatarTranstexhterJsonCore.h"
 
-
 avatarTranstexhterJsonCore tester = avatarTranstexhterJsonCore();
+
+const char initialJson[] PROGMEM = R"(
+{
+  "pose": [
+    {
+      "poseName": "root",
+      "poseValue": {
+        "right-shoulder-roll": 90,
+        "right-shoulder-pitch": 90,
+        "right-elbow-pitch": 90,
+        "body-lift": 1000,
+        "right-foot-yaw": 90,
+        "right-foot-roll": 90,
+        "body-pitch": 90,
+        "left-foot-roll": 90,
+        "left-foot-yaw": 90,
+        "backpack-pitch": 90,
+        "left-elbow-pitch": 90,
+        "left-shoulder-pitch": 90,
+        "left-shoulder-roll": 90,
+        "right-motor-speed": 90,
+        "left-motor-speed": 90,
+        "poseType": 0
+      }
+    }
+  ],
+  "motion": [
+    {
+      "motionName": "initMotion",
+      "motionArrayKey": {
+        "motionPose": "root",
+        "moveTime": 0,
+        "eyeType": 0,
+        "blinkEyeTime": 0,
+        "mouthType": 0,
+        "blinkMouthTime": 0
+      }
+    }
+  ]
+}
+)";
 
 void setup() {
   delay(5000);
@@ -9,6 +49,10 @@ void setup() {
   while (!Serial) {
     delay(10);
   }
+  // setJsonDocument・getJsonDocumentのテスト
+  JsonDocument initJsonDoc;
+  deserializeJson(initJsonDoc, initialJson);
+  tester.setJsonDocument(initJsonDoc);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
   // setPoseテスト
@@ -18,7 +62,7 @@ void setup() {
   Serial.println("###################################");
   // setPoseテスト
   Serial.println("setPose test 2#######################");
-  tester.setPose("add0", "left-shoulder-roll", 134);
+  tester.setPose("root", "left-shoulder-roll", 134);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
   // setPoseTypeテスト
