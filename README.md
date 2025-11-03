@@ -85,7 +85,7 @@ bool setPoseType(String poseKey, poseType value)
 ### getPose
 指定したポーズの値を返す。指定したポーズに該当がない場合は「0」を返す。
 ```
-int getPose(String poseKey, String jointKey, int value)
+int getPose(String poseKey, String jointKey)
 ```
 ### getPoseType
 指定したポーズタイプの値を返す。指定したポーズが該当しない場合は「NONE」を返す。
@@ -116,7 +116,7 @@ bool isMotion(String motionKey)
 ### setMotion
 モーション情報を更新する。該当するポーズ名がない場合、渡したポーズタイプが「POSE」でない場合はfalseを返す。また、indexが既存のモーション情報を超えるような場所を指定した際はfalaseを返す。追加する場合はaddMotionを用いてのみ実施可能とする。
 ```
-bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMotuTime)
+bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
 ```
 ### getMotionPoseName
 指定したモーションのポーズ名を返す。指定したモーションが該当しない場合は「””」を返す。

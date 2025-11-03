@@ -67,7 +67,7 @@ class avatarTranstexhterJsonCore{
     // ポーズタイプを追加・上書きする
     bool setPoseType(String poseKey, poseType value);
     // ポーズ情報を取得する
-    int getPose(String poseKey, String jointKey, int value);
+    int getPose(String poseKey, String jointKey);
     // ポーズタイプを取得する
     poseType getPoseType(String poseKey);
     // ポーズの総数と全キーを返す

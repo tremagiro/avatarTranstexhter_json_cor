@@ -102,10 +102,25 @@ void setup() {
   tester.removePose("add0");
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
+    // getPoseテスト
+  Serial.println("getPose test #######################");
+  for(int i;i<JOINT_TOTAL;i++){
+    Serial.printf("root %s : %d\n", jointKeys[i].c_str(), tester.getPose("add0", jointKeys[i]));
+  }
+  Serial.println("###################################");
   // setMotionテスト
   Serial.println("setMotion test#######################");
   tester.setMotion("initMotion", 0, "add0", 1000, 0, 0, 0, 0);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // 各getテスト
+  Serial.println("get Motion Infos#######################");
+  Serial.printf("initMotion motionPose:%s\n", tester.getMotionPoseName("initMotion", 0).c_str());
+  Serial.printf("initMotion moveTime:%d\n", tester.getMotionMoveTime("initMotion", 0));
+  Serial.printf("initMotion eyeType:%d\n", tester.getMotionEyeType("initMotion", 0));
+  Serial.printf("initMotion eyeBlinkTime:%d\n", tester.getMotionEyeBlinkTime("initMotion", 0));
+  Serial.printf("initMotion mouthType%d\n", tester.getMotionMouthType("initMotion", 0));
+  Serial.printf("initMotion mouthBlinkTime:%d\n", tester.getMotionMouthBlinkTime("initMotion", 0));
   Serial.println("###################################");
 }
 

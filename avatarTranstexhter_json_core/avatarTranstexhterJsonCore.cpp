@@ -1,3 +1,4 @@
+// #include "ArduinoJson/Object/JsonObject.hpp"
 #include "avatarTranstexhterJsonCore.h"
 
 // saveJsonへオブジェクトを渡す
@@ -73,8 +74,18 @@ bool avatarTranstexhterJsonCore::setPoseType(String poseKey, poseType value){
 }
 
 // ポーズ情報を取得する
-int avatarTranstexhterJsonCore::getPose(String poseKey, String jointKey, int value){
-  return true;
+int avatarTranstexhterJsonCore::getPose(String poseKey, String jointKey){
+  if(isPose(poseKey) == true){
+    JsonObject resultObj;
+    getJointJson(poseKey, &resultObj);
+    // serializeJsonPretty(resultObj, Serial);
+    for(int i=0;i<JOINT_TOTAL;i++){
+      if(jointKey.equals(jointKeys[i].c_str()) == true){
+        return resultObj[jointKeys[i].c_str()].as<int>();
+      }
+    }
+  }
+  return 0;
 }
 
 // ポーズタイプを取得する
@@ -171,35 +182,68 @@ bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String p
 
 // モーション名を取得する
 String avatarTranstexhterJsonCore::getMotionPoseName(String motionKey, int index){
-  JsonObject poseInfo;
-  getMotionJson(motionKey, index, &poseInfo);
-  JsonObject poseName = poseInfo[MOTION_VALUE_KEY].as<JsonObject>();
-  return poseName[MOTION_POSE_KEY].as<String>();
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[MOTION_POSE_KEY].as<String>();
+  }else{
+    return "";
+  }
 }
 
 // モーション稼働時間を取得する
 int avatarTranstexhterJsonCore::getMotionMoveTime(String motionKey, int index){
-  return 0;
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[MOVE_TIME_KEY].as<int>();
+  }else{
+    return 0;
+  }
 }
 
 // 実行アイモーションを取得する
 int avatarTranstexhterJsonCore::getMotionEyeType(String motionKey, int index){
-  return 0;
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[EYE_TYPE_KEY].as<int>();
+  }else{
+    return 0;
+  }
 }
 
 // 瞬き実行周期時間を取得する
 int avatarTranstexhterJsonCore::getMotionEyeBlinkTime(String motionKey, int index){
-  return 0;
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[BLINK_EYE_KEY].as<int>();
+  }else{
+    return 0;
+  }
 }
 
 // 実行マウスモーションを取得する
 int avatarTranstexhterJsonCore::getMotionMouthType(String motionKey, int index){
-  return 0;
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[MOUTH_TYPE_KEY].as<int>();
+  }else{
+    return 0;
+  }
 }
 
 // 口パク実行周期時間を取得する
 int avatarTranstexhterJsonCore::getMotionMouthBlinkTime(String motionKey, int index){
-  return 0;
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[BLINK_MOUTH_KEY].as<int>();
+  }else{
+    return 0;
+  }
 }
 
 // モーションのポーズ総数を取得する
