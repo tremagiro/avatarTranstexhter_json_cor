@@ -116,7 +116,7 @@ bool isMotion(String motionKey)
 ### setMotion
 モーション情報を更新する。該当するポーズ名がない場合、渡したポーズタイプが「POSE」でない場合はfalseを返す。また、indexが既存のモーション情報を超えるような場所を指定した際はfalaseを返す。追加する場合はaddMotionを用いてのみ実施可能とする。
 ```
-bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
+bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime, String motionNameTurn = "")
 ```
 ### getMotionPoseName
 指定したモーションのポーズ名を返す。指定したモーションが該当しない場合は「””」を返す。
@@ -159,10 +159,11 @@ int getMotionIndexes(String motionKey)
 int wholeMotion(std::vector<String>& motionKeys)
 ```
 ### addMotions
-モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。
+モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。indexを指定するタイプは、既存のモーションに割り込ませて追加する。
 ```
 bool addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
 bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
+bool addMotions(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
 ```
 ### removeMotion
 指定したインデックスのモーション削除する。最初と最後のPOSEに該当する部分は削除せずfasleを返す。

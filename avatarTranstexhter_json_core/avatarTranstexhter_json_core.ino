@@ -121,16 +121,35 @@ void setup() {
   Serial.printf("initMotion eyeBlinkTime:%d\n", tester.getMotionEyeBlinkTime("initMotion", 0));
   Serial.printf("initMotion mouthType%d\n", tester.getMotionMouthType("initMotion", 0));
   Serial.printf("initMotion mouthBlinkTime:%d\n", tester.getMotionMouthBlinkTime("initMotion", 0));
-  Serial.printf("initMotion ポーズ総数:%d\n", tester.getMotionIndexes("initMotion"));
   Serial.println("###################################");
   // addMotionテスト
-  Serial.println("addMotion test#######################");
-  // tester.setMotion("initMotion", 0, "add0", 1000, 0, 0, 0, 0);
-  // serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("addMotion test 1#######################");
+  tester.addMotions("addMotion0", "add0", "root", 0, 1000, 1, 1500);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // addMotionテスト
+  Serial.println("addMotion test 2#######################");
+  tester.addPose("add3");
+  tester.addMotion("addMotion0", "add3", 1, 2500, 0, 1000, 1, 1500);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
   // モーション総数取得
   Serial.println("get Motion times Infos#######################");
+  Serial.printf("addMotion0 ポーズ総数:%d\n", tester.getMotionIndexes("addMotion0"));
   std::vector<String> motionKeys;
+  Serial.printf("モーション総数:%d\n", tester.wholeMotion(motionKeys));
+  for(String s : motionKeys){
+    Serial.println(s);
+  }
+  Serial.println("###################################");
+  // モーション削除
+  Serial.println("remove Motion times Infos#######################");
+  tester.removeMotion("addMotion0", 1);
+  tester.removeMotions("initMotion");
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  // モーション総数取得
+  Serial.printf("addMotion0 ポーズ総数:%d\n", tester.getMotionIndexes("addMotion0"));
+  motionKeys.clear();
   Serial.printf("モーション総数:%d\n", tester.wholeMotion(motionKeys));
   for(String s : motionKeys){
     Serial.println(s);
