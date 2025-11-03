@@ -55,15 +55,15 @@
 }
 ```
 ## メソッド
-### setJsonObject
+### setJsonDocument
 インスタンスにJSONオブジェクトを渡すと保持する。
 ```
-void isMatchTemplate(JsonObject saveJsonObject)
+void isMatchTemplate(JsonDocument saveJsonDocument)
 ```
-### getJsonObject
+### getJsonDocument
 インスタンスで保持しているJSONオブジェクトを渡す。
 ```
-JsonObject getJsonObject()
+JsonDocument getJsonDocument()
 ```
 ### isPose
 指定したポーズ名の情報があるかどうかを判定する。

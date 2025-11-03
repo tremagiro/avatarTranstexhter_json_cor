@@ -12,7 +12,8 @@ JsonDocument avatarTranstexhterJsonCore::getJsonDocument(){
 
 // ポーズの有無
 bool avatarTranstexhterJsonCore::isPose(String poseKey){
-  return true;
+  JsonObject obj;
+  return getPoseJson(poseKey, &obj);
 }
 
 // ポーズ情報を追加・上書きする
@@ -32,10 +33,16 @@ bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int va
   // 指定のポーズは存在するか
   if(isPose(poseKey) == false){
     // 新規作成
-    initJson();
+    addPoseJson(poseKey, POSE);
   }
   // 指定のキーの値を更新
-  return true;
+  JsonObject updateJsonObj;
+  if(getJointJson(poseKey, &updateJsonObj) == true){
+    updateJsonObj[jointKey] = value;
+    return true;
+  }else{
+    return false;
+  }
 }
 
 // ポーズタイプを追加・上書きする
@@ -140,25 +147,60 @@ void avatarTranstexhterJsonCore::initJson(){
   saveJsonDoc[POSE_KEY].to<JsonArray>();
   saveJsonDoc[MOTION_KEY].to<JsonArray>();
   // ポーズ情報
+  addPoseJson("root", ROOT);
+  // モーション情報
+  addMotionJson("initMotion", "root", 0, 0, 0, 0);
+}
+
+// ポーズの追加
+void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
+  // ポーズ情報
   JsonArray poseArray = saveJsonDoc[POSE_KEY];
   JsonObject poseNameObj = poseArray.add<JsonObject>();
-  poseNameObj[POSE_NAME_KEY] = "root";
+  poseNameObj[POSE_NAME_KEY] = poseeName;
   JsonObject poseValueObj = poseNameObj[POSE_VALUE_KEY].to<JsonObject>();
   for(int i=0;i<JOINT_TOTAL;i++){
     poseValueObj[jointKeys[i]] = 0;
   }
-  poseValueObj[MOTION_TYPE_KEY] = ROOT;
-  // モーション情報
+  poseValueObj[MOTION_TYPE_KEY] = type;
+}
+
+// モーションの追加
+void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
   JsonArray motionArray = saveJsonDoc[MOTION_KEY];
   JsonObject motionNameObj = motionArray.add<JsonObject>();
-  motionNameObj[MOTION_NAME_KEY] = "init";
+  motionNameObj[MOTION_NAME_KEY] = motionKey;
   JsonObject motionValueObj = motionNameObj[MOTION_ARRAY_KEY].to<JsonObject>();
   for(int i=0;i<2;i++){
-    motionValueObj[MOTION_POSE_KEY] = "root";
+    motionValueObj[MOTION_POSE_KEY] = startPose;
     motionValueObj[MOVE_TIME_KEY] = 0;
-    motionValueObj[EYE_TYPE_KEY] = 0;
-    motionValueObj[BLINK_EYE_KEY] = 1000;
-    motionValueObj[MOUTH_TYPE_KEY] = 0;
-    motionValueObj[BLINK_MOUTH_KEY] = 1000;
+    motionValueObj[EYE_TYPE_KEY] = eyeType;
+    motionValueObj[BLINK_EYE_KEY] = blinkEyeTime;
+    motionValueObj[MOUTH_TYPE_KEY] = mouthType;
+    motionValueObj[BLINK_MOUTH_KEY] = blinkMouthTime;
   }
+}
+
+// ポーズの編集対象を渡す
+bool avatarTranstexhterJsonCore::getPoseJson(String poseKey, JsonObject* obj){
+  JsonArray poseArray = saveJsonDoc[POSE_KEY];
+  for(JsonObject poseObj : poseArray){
+    if(poseObj[POSE_NAME_KEY].as<String>() == poseKey){
+      *obj = poseObj;
+      return true;
+    }
+  }
+  return false;
+}
+
+// ジョイントの編集対象を渡す
+bool avatarTranstexhterJsonCore::getJointJson(String poseKey, JsonObject* obj){
+  JsonArray poseArray = saveJsonDoc[POSE_KEY];
+  for(JsonObject poseObj : poseArray){
+    if(poseObj[POSE_NAME_KEY] == poseKey){
+      *obj = poseObj[POSE_VALUE_KEY].as<JsonObject>();
+      return true;
+    }
+  }
+  return false;
 }

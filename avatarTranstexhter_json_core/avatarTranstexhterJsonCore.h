@@ -42,6 +42,10 @@ class avatarTranstexhterJsonCore{
   private:
     JsonDocument saveJsonDoc;
     void initJson();
+    void addPoseJson(String poseeName, poseType type);
+    void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+    bool getPoseJson(String poseKey, JsonObject* obj);
+    bool getJointJson(String poseKey, JsonObject* obj);
   public:
     avatarTranstexhterJsonCore(){
       // 初期化
