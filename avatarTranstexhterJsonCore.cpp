@@ -345,9 +345,9 @@ void avatarTranstexhterJsonCore::initJson(){
   saveJsonDoc[POSE_KEY].to<JsonArray>();
   saveJsonDoc[MOTION_KEY].to<JsonArray>();
   // ポーズ情報
-  addPoseJson("root", ROOT);
+  // addPoseJson("root", ROOT);
   // モーション情報
-  addMotionJson("initMotion", "root", 0, 0, 0, 0);
+  // addMotionJson("initMotion", "root", 0, 0, 0, 0);
 }
 
 // ポーズの追加
