@@ -77,9 +77,14 @@ void setup() {
   tester.setPose("add0", "right-shoulder-roll", 100);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
-  // setPoseテスト
+  // setPoseテスト2
   Serial.println("setPose test 2#######################");
   tester.setPose("root", "left-shoulder-roll", 134);
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println("###################################");
+  // setPoseテスト3
+  Serial.println("setPose test 3#######################");
+  tester.setPose("add0", "left-shoulder-roll", 134, false);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
   // setPoseTypeテスト

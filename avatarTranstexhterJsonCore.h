@@ -63,7 +63,7 @@ class avatarTranstexhterJsonCore{
     // ポーズの有無
     bool isPose(String poseKey);
     // ポーズ情報を追加・上書きする
-    bool setPose(String poseKey, String jointKey, int value);
+    bool setPose(String poseKey, String jointKey, int value, bool enable = true);
     // ポーズタイプを追加・上書きする
     bool setPoseType(String poseKey, poseType value);
     // ポーズ情報を取得する

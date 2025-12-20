@@ -17,7 +17,7 @@ bool avatarTranstexhterJsonCore::isPose(String poseKey){
 }
 
 // ポーズ情報を追加・上書きする
-bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int value){
+bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int value, bool enable){
   // 指定の関節キーが存在しない
   bool isJointKey = false;
   for(int i=0;i<JOINT_TOTAL;i++){
@@ -38,7 +38,17 @@ bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int va
   // 指定のキーの値を更新
   JsonObject updateJsonObj;
   if(getJointJson(poseKey, &updateJsonObj) == true){
-    updateJsonObj[jointKey] = value;
+    if(enable == true){
+      updateJsonObj[jointKey] = value;
+    }else{
+      // 指定のポーズで該当関節は指定値がないので削除する
+      if(getPoseType(poseKey) != ROOT){
+        updateJsonObj.remove(jointKey);
+      }else{
+        // ROOTタイプは削除不可
+        return false;
+      }
+    }
     return true;
   }else{
     return false;

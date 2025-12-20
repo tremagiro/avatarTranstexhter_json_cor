@@ -79,9 +79,9 @@ JsonDocument getJsonDocument()
 bool isPose(String poseKey)
 ```
 ### setPose
-ポーズ情報をインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は指定した関節キーの値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。追加するポーズ情報のポーズタイプは「POSE」である。指定した関節キーが存在しない場合はfalseを返す。
+ポーズ情報をインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は指定した関節キーの値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。追加するポーズ情報のポーズタイプは「POSE」である。指定した関節キーが存在しない場合はfalseを返す。enable に false を渡すと、指定したポーズから該当関節のキーを削除し、そのポーズでは当該関節の動作角を指定しないようになる。なお、指定したポーズが ROOT タイプの場合は、この設定は無効になる。
 ```
-bool setPose(String poseKey, String jointKey, int value)
+bool setPose(String poseKey, String jointKey, int value, bool enable = true)
 ```
 ### setPoseType
 ポーズタイプをインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は指定したポーズタイプの値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。指定した関節キーが存在しない場合はfalseを返す。またvalueに「ROOT」を渡した場合、元の「ROOT」を保持していたポーズは「STATE」に書き換わる。
