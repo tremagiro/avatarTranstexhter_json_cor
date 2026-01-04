@@ -181,3 +181,18 @@ bool removeMotion(String motionKey, int index);
 ```
 void removeMotions(String motionKey)
 ```
+### 他使用可能メソッド（今後紹介文を記載予定）
+```
+// ポーズを追加
+void addPoseJson(String poseeName, poseType type);
+// モーションを追加
+void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+// ポーズの編集対象を渡す
+bool getPoseJson(String poseKey, JsonObject* obj);
+// 関節の編集対象を渡す
+bool getJointJson(String poseKey, JsonObject* obj);
+// モーションの編集対象を渡す
+bool getMotionJson(String motionKey, JsonArray* obj);
+// 指定モーションインデックスの編集対象を渡す
+bool getMotionJson(String motionKey, int index, JsonObject* obj);
+```
