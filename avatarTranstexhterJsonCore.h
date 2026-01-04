@@ -20,6 +20,7 @@
 #define BLINK_MOUTH_KEY "blinkMouthTime"
 #define MOTION_NAME_TURN_KEY "motionNameTurn"
 #define MOTION_VALUE_KEY "motionValue"
+#define POSE_ENABLE_KEY "Enable"
 
 enum poseType{ROOT, STATE, POSE, NONE};
 // ジョイントのキー
@@ -68,6 +69,8 @@ class avatarTranstexhterJsonCore{
     bool setPoseType(String poseKey, poseType value);
     // ポーズ情報を取得する
     int getPose(String poseKey, String jointKey);
+    // ポーズ情報が有効かを取得する
+    bool getEnablePose(String poseKey, String jointKey);
     // ポーズタイプを取得する
     poseType getPoseType(String poseKey);
     // ポーズの総数と全キーを返す

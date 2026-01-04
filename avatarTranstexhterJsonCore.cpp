@@ -38,17 +38,19 @@ bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int va
   // 指定のキーの値を更新
   JsonObject updateJsonObj;
   if(getJointJson(poseKey, &updateJsonObj) == true){
-    if(enable == true){
-      updateJsonObj[jointKey] = value;
-    }else{
-      // 指定のポーズで該当関節は指定値がないので削除する
-      if(getPoseType(poseKey) != ROOT){
-        updateJsonObj.remove(jointKey);
-      }else{
-        // ROOTタイプは削除不可
-        return false;
-      }
-    }
+    // if(enable == true){
+    //   updateJsonObj[jointKey] = value;
+    // }else{
+    //   // 指定のポーズで該当関節は指定値がないので削除する
+    //   if(getPoseType(poseKey) != ROOT){
+    //     updateJsonObj.remove(jointKey);
+    //   }else{
+    //     // ROOTタイプは削除不可
+    //     return false;
+    //   }
+    // }
+    updateJsonObj[jointKey] = value;
+    updateJsonObj[jointKey + POSE_ENABLE_KEY] = enable;
     return true;
   }else{
     return false;
@@ -95,6 +97,21 @@ int avatarTranstexhterJsonCore::getPose(String poseKey, String jointKey){
     }
   }
   return 0;
+}
+
+// ポーズ情報が有効かを取得する
+bool avatarTranstexhterJsonCore::getEnablePose(String poseKey, String jointKey){
+  if(isPose(poseKey) == true){
+    JsonObject resultObj;
+    getJointJson(poseKey, &resultObj);
+    // serializeJsonPretty(resultObj, Serial);
+    for(int i=0;i<JOINT_TOTAL;i++){
+      if(jointKey.equals((jointKeys[i] + POSE_ENABLE_KEY).c_str()) == true){
+        return resultObj[(jointKeys[i] + POSE_ENABLE_KEY).c_str()].as<int>();
+      }
+    }
+  }
+  return false;
 }
 
 // ポーズタイプを取得する
@@ -368,7 +385,10 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
   poseNameObj[POSE_NAME_KEY] = poseeName;
   JsonObject poseValueObj = poseNameObj[POSE_VALUE_KEY].to<JsonObject>();
   for(int i=0;i<JOINT_TOTAL;i++){
+    // 関節キーの値を格納
     poseValueObj[jointKeys[i]] = 0;
+    // 関節が有効かをどうかを格納
+    poseValueObj[jointKeys[i] + POSE_ENABLE_KEY] = true;
   }
   poseValueObj[POSE_TYPE_KEY] = type;
 }
