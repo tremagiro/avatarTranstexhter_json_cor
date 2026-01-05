@@ -107,7 +107,11 @@ bool avatarTranstexhterJsonCore::getEnablePose(String poseKey, String jointKey){
     // serializeJsonPretty(resultObj, Serial);
     for(int i=0;i<JOINT_TOTAL;i++){
       if(jointKey.equals((jointKeys[i] + POSE_ENABLE_KEY).c_str()) == true){
-        return resultObj[(jointKeys[i] + POSE_ENABLE_KEY).c_str()].as<int>();
+        if(resultObj[(jointKeys[i] + POSE_ENABLE_KEY).c_str()].as<int>() == 1){
+          return true;
+        }else{
+          return false;
+        }
       }
     }
   }
