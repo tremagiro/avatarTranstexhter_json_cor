@@ -50,7 +50,7 @@ bool avatarTranstexhterJsonCore::setPose(String poseKey, String jointKey, int va
     //   }
     // }
     updateJsonObj[jointKey] = value;
-    updateJsonObj[jointKey + POSE_ENABLE_KEY] = enable;
+    updateJsonObj[jointKey + POSE_ENABLE_KEY] = int(enable);
     return true;
   }else{
     return false;
@@ -107,7 +107,7 @@ bool avatarTranstexhterJsonCore::getEnablePose(String poseKey, String jointKey){
     // serializeJsonPretty(resultObj, Serial);
     for(int i=0;i<JOINT_TOTAL;i++){
       if(jointKey.equals((jointKeys[i] + POSE_ENABLE_KEY).c_str()) == true){
-        return resultObj[(jointKeys[i] + POSE_ENABLE_KEY).c_str()].as<bool>();
+        return resultObj[(jointKeys[i] + POSE_ENABLE_KEY).c_str()].as<int>();
       }
     }
   }
@@ -388,7 +388,7 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
     // 関節キーの値を格納
     poseValueObj[jointKeys[i]] = 0;
     // 関節が有効かをどうかを格納
-    poseValueObj[jointKeys[i] + POSE_ENABLE_KEY] = true;
+    poseValueObj[jointKeys[i] + POSE_ENABLE_KEY] = int(true);
   }
   poseValueObj[POSE_TYPE_KEY] = type;
 }
