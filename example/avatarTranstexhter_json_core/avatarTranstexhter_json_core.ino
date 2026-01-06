@@ -1,4 +1,4 @@
-#include <avatarTranstexhterJsonCore.h>
+#include "avatarTranstexhterJsonCore.h"
 
 avatarTranstexhterJsonCore tester = avatarTranstexhterJsonCore();
 
@@ -8,22 +8,34 @@ const char initialJson[] PROGMEM = R"(
     {
       "poseName": "root",
       "poseValue": {
+        "Enable": 1,
+        "poseType": 0,
         "right-shoulder-roll": 90,
+        "right-shoulder-rollEnable": 0,
         "right-shoulder-pitch": 90,
+        "right-shoulder-pitchEnable": 1,
         "right-elbow-pitch": 90,
-        "body-lift": 1000,
+        "right-elbow-pitchEnable": 0,
+        "body-lift": 4000,
+        "body-liftEnable": 1,
         "right-foot-yaw": 90,
+        "right-foot-yawEnable": 0,
         "right-foot-roll": 90,
+        "right-foot-rollEnable": 1,
         "body-pitch": 90,
+        "body-pitchEnable": 0,
         "left-foot-roll": 90,
+        "left-foot-rollEnable": 1,
         "left-foot-yaw": 90,
+        "left-foot-yawEnable": 0,
         "backpack-pitch": 90,
+        "backpack-pitchEnable": 1,
         "left-elbow-pitch": 90,
+        "left-elbow-pitchEnable": 0,
         "left-shoulder-pitch": 90,
+        "left-shoulder-pitchEnable": 0,
         "left-shoulder-roll": 90,
-        "right-motor-speed": 90,
-        "left-motor-speed": 90,
-        "poseType": 0
+        "left-shoulder-rollEnable": 0
       }
     }
   ],
@@ -64,11 +76,11 @@ void setup() {
   while (!Serial) {
     delay(10);
   }
-  // serializeJsonPretty(tester.getJsonDocument(), Serial);
-  // Serial.println("###################################");
+  Serial.println("###################################");
   // setJsonDocument・getJsonDocumentのテスト
   JsonDocument initJsonDoc;
   deserializeJson(initJsonDoc, initialJson);
+  serializeJsonPretty(initJsonDoc, Serial);
   tester.setJsonDocument(initJsonDoc);
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
@@ -107,10 +119,15 @@ void setup() {
   tester.removePose("add0");
   serializeJsonPretty(tester.getJsonDocument(), Serial);
   Serial.println("###################################");
-    // getPoseテスト
+  // getPoseテスト
   Serial.println("getPose test #######################");
-  for(int i;i<JOINT_TOTAL;i++){
-    Serial.printf("root %s : %d\n", jointKeys[i].c_str(), tester.getPose("add0", jointKeys[i]));
+  for(int i = 0;i<JOINT_TOTAL;i++){
+    Serial.printf("root %s : %d\n", jointKeys[i].c_str(), tester.getPose("root", jointKeys[i]));
+  }
+  // getEnablePoseテスト
+  Serial.println("getPose test #######################");
+  for(int i = 0;i<JOINT_TOTAL;i++){
+    Serial.printf("root %s : %d\n", jointKeys[i].c_str(), tester.getEnablePose("root", jointKeys[i]));
   }
   Serial.println("###################################");
   // setMotionテスト
