@@ -3,7 +3,7 @@
 #include <vector>
 
 // ジョイントの総数
-#define JOINT_TOTAL 15
+#define JOINT_TOTAL 17
 // JOSNファイルキー
 #define POSE_KEY  "pose"
 #define MOTION_KEY  "motion"
@@ -38,6 +38,8 @@ static const String jointKeys[JOINT_TOTAL] = {
   "left-elbow-pitch",
   "left-shoulder-pitch",
   "left-shoulder-roll",
+  "right-eye-roll",
+  "left-eye-roll",
   "right-motor-speed",
   "left-motor-speed"
 };
