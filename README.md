@@ -4,7 +4,7 @@
 ## 依存ライブラリ
 * ArduinoJson(https://arduinojson.org/?utm_source=meta&utm_medium=library.properties)
 
-    Ver 7.4.2で動作確認済み
+    Ver 7.4.3で動作確認済み
 
 ## JSON構造
 ### 全体構造
