@@ -1,0 +1,1 @@
+../../avatarTranstexhterJsonCore.cpp

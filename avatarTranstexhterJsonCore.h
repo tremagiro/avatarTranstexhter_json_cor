@@ -98,14 +98,15 @@ class avatarTranstexhterJsonCore{
     // モーションを追加する
     bool addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
+    // モーションデータを割り込ませる
     bool addMotion(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     // 指定したインデックスのモーションを削除する
     bool removeMotion(String motionKey, int index);
     // モーションを削除する
     void removeMotions(String motionKey);
-    // ポーズを追加
+    // ポーズ用JSONデータを追加
     void addPoseJson(String poseeName, poseType type);
-    // モーションを追加
+    // モーション用JSONデータを追加
     void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
     // ポーズの編集対象を渡す
     bool getPoseJson(String poseKey, JsonObject* obj);
