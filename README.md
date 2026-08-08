@@ -37,11 +37,14 @@
     "left-elbow-pitch": 左肘ピッチ軸動作角度(int: [°]),
     "left-shoulder-pitch": 左肩ピッチ軸動作角度(int: [°]),
     "left-shoulder-roll":　左肩ロール軸動作角度(int: [°]),
+    "right-eye-roll": 右目ロール軸動作角度(int: [°]),
+    "left-eye-roll": 左目ロール軸動作角度(int: [°]),
     "right-motor-speed": 右モーター回転速度(int: ),
     "left-motor-speed": 左モーター回転速度(int: ),
     "poseType": ポーズタイプ(enum poseType: ROOT or STATE or POSE or NONE)
 }
 ```
+※各関節キーには「関節キー＋"Enable"」（例: "right-shoulder-rollEnable"）という関節有効フラグ(int: 0 or 1)が対で保存される。ポーズ新規作成時は1で初期化され、setPoseのenable引数で更新できる。
 ### モーション情報
 ```
 {
@@ -66,7 +69,7 @@
 ### setJsonDocument
 インスタンスにJSONオブジェクトを渡すと保持する。
 ```
-void isMatchTemplate(JsonDocument saveJsonDocument)
+void setJsonDocument(JsonDocument saveJsonDocument)
 ```
 ### getJsonDocument
 インスタンスで保持しているJSONオブジェクトを渡す。
@@ -79,7 +82,7 @@ JsonDocument getJsonDocument()
 bool isPose(String poseKey)
 ```
 ### setPose
-ポーズ情報をインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は指定した関節キーの値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。追加するポーズ情報のポーズタイプは「POSE」である。指定した関節キーが存在しない場合はfalseを返す。enable に false を渡すと、指定したポーズから該当関節のキーを削除し、そのポーズでは当該関節の動作角を指定しないようになる。なお、指定したポーズが ROOT タイプの場合は、この設定は無効になる。
+ポーズ情報をインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は指定した関節キーの値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。追加するポーズ情報のポーズタイプは「POSE」である。指定した関節キーが存在しない場合はfalseを返す。enableには関節有効フラグ(0 or 1)を指定し、対応する「関節キー＋"Enable"」キーに保存される。
 ```
 bool setPose(String poseKey, String jointKey, int value, bool enable = true)
 ```
@@ -92,6 +95,11 @@ bool setPoseType(String poseKey, poseType value)
 指定したポーズの値を返す。指定したポーズに該当がない場合は「0」を返す。
 ```
 int getPose(String poseKey, String jointKey)
+```
+### getEnablePose
+指定したポーズの関節有効フラグを返す。指定したポーズまたは関節キーに該当がない場合は「false」を返す。
+```
+bool getEnablePose(String poseKey, String jointKey)
 ```
 ### getPoseType
 指定したポーズタイプの値を返す。指定したポーズが該当しない場合は「NONE」を返す。
@@ -165,11 +173,15 @@ int getMotionIndexes(String motionKey)
 int wholeMotion(std::vector<String>& motionKeys)
 ```
 ### addMotions
-モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。indexを指定するタイプは、既存のモーションに割り込ませて追加する。
+モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。
 ```
 bool addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
 bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
-bool addMotions(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
+```
+### addMotion
+指定したモーションの既存モーション配列に、指定indexの位置へ新規モーションステップを割り込ませて追加する。指定したモーションが存在しない場合、またはindexが範囲外の場合はfalseを返す。先頭(0)または末尾に割り込む場合、指定したポーズのポーズタイプが「ROOT」または「STATE」でなければfalseを返す。
+```
+bool addMotion(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
 ```
 ### removeMotion
 指定したインデックスのモーション削除する。最初と最後のPOSEに該当する部分は削除せずfasleを返す。
@@ -181,18 +193,29 @@ bool removeMotion(String motionKey, int index);
 ```
 void removeMotions(String motionKey)
 ```
-### 他使用可能メソッド（今後紹介文を記載予定）
+### addPoseJson
+ポーズ用のJSON要素を新規作成し、保持するJSONオブジェクトに追加する。既存ポーズの重複チェックは行わないため、通常はaddPose・setPoseの利用を推奨する。
 ```
-// ポーズを追加
-void addPoseJson(String poseeName, poseType type);
-// モーションを追加
-void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime);
-// ポーズの編集対象を渡す
-bool getPoseJson(String poseKey, JsonObject* obj);
-// 関節の編集対象を渡す
-bool getJointJson(String poseKey, JsonObject* obj);
-// モーションの編集対象を渡す
-bool getMotionJson(String motionKey, JsonArray* obj);
-// 指定モーションインデックスの編集対象を渡す
-bool getMotionJson(String motionKey, int index, JsonObject* obj);
+void addPoseJson(String poseeName, poseType type)
+```
+### addMotionJson
+モーション用のJSON要素（先頭・末尾の2ステップ）を新規作成し、保持するJSONオブジェクトに追加する。既存モーションの重複チェックは行わないため、通常はaddMotionsの利用を推奨する。
+```
+void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
+```
+### getPoseJson
+指定したポーズ名のJsonObjectを引数のポインタ経由で渡す。該当するポーズがない場合はfalseを返す。
+```
+bool getPoseJson(String poseKey, JsonObject* obj)
+```
+### getJointJson
+指定したポーズの関節情報(poseValue)のJsonObjectを引数のポインタ経由で渡す。該当するポーズがない場合はfalseを返す。
+```
+bool getJointJson(String poseKey, JsonObject* obj)
+```
+### getMotionJson
+指定したモーション名のモーション配列、または指定したモーション・インデックスのJsonObjectを引数のポインタ経由で渡す。該当するモーションがない場合、もしくはインデックスが範囲外の場合はfalseを返す。
+```
+bool getMotionJson(String motionKey, JsonArray* obj)
+bool getMotionJson(String motionKey, int index, JsonObject* obj)
 ```

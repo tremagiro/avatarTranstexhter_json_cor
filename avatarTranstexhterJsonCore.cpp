@@ -300,6 +300,13 @@ int avatarTranstexhterJsonCore::wholeMotion(std::vector<String>& motionKeys){
 
 // モーションを追加する
 bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+  // 指定されたモーションが「POSE」の場合はstartもしくはfinishのポーズとして指定できない
+  if(getPoseType(startPose) == POSE){
+    return false;
+  }
+  if(getPoseType(finishPose) == POSE){
+    return false;
+  }
   // JSONオブジェクトにモーションを追加
   addMotionJson(motionKey, startPose, eyeType, blinkEyeTime, mouthType, blinkMouthTime);
   // 最後尾のモーションポーズを編集
@@ -337,8 +344,10 @@ bool avatarTranstexhterJsonCore::addMotion(String motionKey, String poseName, in
     }
     String motionNameTurn = motionKey + (String)editMotion.size();
     setMotion(motionKey, index, poseName, moveTime, eyeType, blinkEyeTime, mouthType, blinkMouthTime, motionNameTurn);
+    return true;
+  }else{
+    return false;
   }
-  return false;
 }
 
 // 指定したインデックスのモーションを削除する
@@ -382,7 +391,7 @@ void avatarTranstexhterJsonCore::initJson(){
   // addMotionJson("initMotion", "root", 0, 0, 0, 0);
 }
 
-// ポーズの追加
+// ポーズ用JSONデータの追加
 void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
   // ポーズ情報
   JsonArray poseArray = saveJsonDoc[POSE_KEY];
@@ -398,7 +407,7 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
   poseValueObj[POSE_TYPE_KEY] = type;
 }
 
-// モーションの追加
+// モーション用JSONデータの追加
 void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
   JsonArray motionsArray = saveJsonDoc[MOTION_KEY];
   JsonObject motionObj = motionsArray.add<JsonObject>();
@@ -412,9 +421,9 @@ void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPos
     motionValue[MOTION_POSE_KEY] = startPose;
     motionValue[MOVE_TIME_KEY] = 0;
     motionValue[EYE_TYPE_KEY] = eyeType;
-    motionValue[BLINK_EYE_KEY] = 0;
+    motionValue[BLINK_EYE_KEY] = blinkEyeTime;
     motionValue[MOUTH_TYPE_KEY] = mouthType;
-    motionValue[BLINK_MOUTH_KEY] = 0;
+    motionValue[BLINK_MOUTH_KEY] = blinkMouthTime;
   }
 }
 
