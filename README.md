@@ -41,10 +41,13 @@
     "left-eye-roll": 左目ロール軸動作角度(int: [°]),
     "right-motor-speed": 右モーター回転速度(int: ),
     "left-motor-speed": 左モーター回転速度(int: ),
-    "poseType": ポーズタイプ(enum poseType: ROOT or STATE or POSE or NONE)
+    "poseType": ポーズタイプ(enum poseType: ROOT or STATE or POSE or NONE),
+    "eyeBrightness": 目のディスプレイの明るさ(int: 0〜255)
 }
 ```
 ※各関節キーには「関節キー＋"Enable"」（例: "right-shoulder-rollEnable"）という関節有効フラグ(int: 0 or 1)が対で保存される。ポーズ新規作成時は1で初期化され、setPoseのenable引数で更新できる。
+
+※"eyeBrightness"は関節ではないため、ROOT以外のポーズでもROOTとの差分ではなく値そのもの（絶対値）を保存する。ポーズ新規作成時は`EYE_BRIGHTNESS_DEFAULT`(255)で初期化され、setPoseEyeBrightnessで更新できる。値がない（古い形式の）ポーズは`EYE_BRIGHTNESS_DEFAULT`として扱う。
 ### モーション情報
 ```
 {
@@ -59,12 +62,16 @@
 {
     "motionPose": ポーズ名(String),
     "moveTime": 稼働時間(int: [ms]),
-    "eyeType": 実行アイモーション(int),
-    "blinkEyeTime": 瞬き実行周期(int: [ms]),
+    "pupilTypeL": 左目の瞳孔画像の種類(int),
+    "pupilTypeR": 右目の瞳孔画像の種類(int),
+    "eyelidTypeL": 左目の瞼画像の種類(int),
+    "eyelidTypeR": 右目の瞼画像の種類(int),
+    "blinkEyeTime": 瞬きを発生するまでの時間(int: [ms]),
     "mouthType": 実行マウスモーション(int),
     "blinkMouthTime": 口パク実行周期(int: [ms])
 }
 ```
+※以前の"eyeType"（実行アイモーション）は、左右の瞳孔・瞼（"pupilTypeL"・"pupilTypeR"・"eyelidTypeL"・"eyelidTypeR"）に置き換えた。古い形式のデータを読み込んだ場合、新しいキーの値は0として扱い、setMotionでそのステップを上書きしたときに"eyeType"は削除される。
 ## メソッド
 ### setJsonDocument
 インスタンスにJSONオブジェクトを渡すと保持する。
@@ -106,6 +113,16 @@ bool getEnablePose(String poseKey, String jointKey)
 ```
 poseType getPoseType(String poseKey)
 ```
+### setPoseEyeBrightness
+目のディスプレイの明るさをインスタンスに保持するJSONオブジェクトに追加する。もし指定したポーズ名がある場合は値を上書きする。該当するポーズ名がない場合は新たにポーズ情報を追加する。
+```
+bool setPoseEyeBrightness(String poseKey, int value)
+```
+### getPoseEyeBrightness
+指定したポーズの目のディスプレイの明るさを返す。指定したポーズが該当しない場合、または値がない場合は「EYE_BRIGHTNESS_DEFAULT」(255)を返す。
+```
+int getPoseEyeBrightness(String poseKey)
+```
 ### wholePose
 インスタンスが保持する全ポーズ数を返す。また、渡したString型ポインタに全ポーズ名を渡す。
 ```
@@ -130,7 +147,7 @@ bool isMotion(String motionKey)
 ### setMotion
 モーション情報を更新する。該当するポーズ名がない場合、渡したポーズタイプが「POSE」でない場合はfalseを返す。また、indexが既存のモーション情報を超えるような場所を指定した際はfalaseを返す。追加する場合はaddMotionを用いてのみ実施可能とする。
 ```
-bool setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime, String motionNameTurn = "")
+bool setMotion(String motionKey, int index, String poseName, int moveTime, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime, String motionNameTurn = "")
 ```
 ### getMotionPoseName
 指定したモーションのポーズ名を返す。指定したモーションが該当しない場合は「””」を返す。
@@ -142,13 +159,20 @@ String getMotionPoseName(String motionKey, int index)
 ```
 int getMotionMoveTime(String motionKey, int index)
 ```
-### getMotionEyeType
-指定したモーションの実行アイモーションを返す。指定したモーションが該当しない場合は「0」を返す。
+### getMotionPupilTypeL / getMotionPupilTypeR
+指定したモーションの左目・右目の瞳孔画像の種類を返す。指定したモーションが該当しない場合、または値がない場合は「0」を返す。
 ```
-int getMotionEyeType(String motionKey, int index)
+int getMotionPupilTypeL(String motionKey, int index)
+int getMotionPupilTypeR(String motionKey, int index)
+```
+### getMotionEyelidTypeL / getMotionEyelidTypeR
+指定したモーションの左目・右目の瞼画像の種類を返す。指定したモーションが該当しない場合、または値がない場合は「0」を返す。
+```
+int getMotionEyelidTypeL(String motionKey, int index)
+int getMotionEyelidTypeR(String motionKey, int index)
 ```
 ### getMotionEyeBlinkTime
-指定したモーションの瞬き周期時間を返す。指定したモーションが該当しない場合は「0」を返す。
+指定したモーションの瞬きを発生するまでの時間を返す。指定したモーションが該当しない場合は「0」を返す。
 ```
 int getMotionEyeBlinkTime(String motionKey, int index)
 ```
@@ -175,13 +199,13 @@ int wholeMotion(std::vector<String>& motionKeys)
 ### addMotions
 モーションを追加する。startPoseおよびfinishPoseのポーズタイプが「POSE」の場合はfalseを返し、モーション追加を行わない。finishPoseの記載がない場合はfinishPose=startPoseと追加する。
 ```
-bool addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
-bool addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime) 
+bool addMotions(String motionKey, String startPose, String finishPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime) 
+bool addMotions(String motionKey, String startPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime) 
 ```
 ### addMotion
 指定したモーションの既存モーション配列に、指定indexの位置へ新規モーションステップを割り込ませて追加する。指定したモーションが存在しない場合、またはindexが範囲外の場合はfalseを返す。先頭(0)または末尾に割り込む場合、指定したポーズのポーズタイプが「ROOT」または「STATE」でなければfalseを返す。
 ```
-bool addMotion(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
+bool addMotion(String motionKey, String poseName, int index, int moveTime, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime)
 ```
 ### removeMotion
 指定したインデックスのモーション削除する。最初と最後のPOSEに該当する部分は削除せずfasleを返す。
@@ -201,7 +225,7 @@ void addPoseJson(String poseeName, poseType type)
 ### addMotionJson
 モーション用のJSON要素（先頭・末尾の2ステップ）を新規作成し、保持するJSONオブジェクトに追加する。既存モーションの重複チェックは行わないため、通常はaddMotionsの利用を推奨する。
 ```
-void addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime)
+void addMotionJson(String motionKey, String startPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime)
 ```
 ### getPoseJson
 指定したポーズ名のJsonObjectを引数のポインタ経由で渡す。該当するポーズがない場合はfalseを返す。

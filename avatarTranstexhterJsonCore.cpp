@@ -129,6 +129,32 @@ poseType avatarTranstexhterJsonCore::getPoseType(String poseKey){
   return NONE;
 }
 
+// 目の明るさを追加・上書きする
+bool avatarTranstexhterJsonCore::setPoseEyeBrightness(String poseKey, int value){
+  // 指定のポーズは存在するか
+  if(isPose(poseKey) == false){
+    // 新規作成
+    addPoseJson(poseKey, POSE);
+  }
+  // 指定のキーの値を更新
+  JsonObject updateJsonObj;
+  if(getJointJson(poseKey, &updateJsonObj) == true){
+    updateJsonObj[EYE_BRIGHTNESS_KEY] = value;
+    return true;
+  }else{
+    return false;
+  }
+}
+
+// 目の明るさを取得する(値がない場合は EYE_BRIGHTNESS_DEFAULT)
+int avatarTranstexhterJsonCore::getPoseEyeBrightness(String poseKey){
+  JsonObject resultObj;
+  if(getJointJson(poseKey, &resultObj) == true){
+    return resultObj[EYE_BRIGHTNESS_KEY] | EYE_BRIGHTNESS_DEFAULT;
+  }
+  return EYE_BRIGHTNESS_DEFAULT;
+}
+
 // ポーズの総数と全キーを返す
 int avatarTranstexhterJsonCore::wholePose(std::vector<String>& poseKeys){
   JsonArray poseArray = saveJsonDoc[POSE_KEY];
@@ -175,7 +201,7 @@ bool avatarTranstexhterJsonCore::isMotion(String motionKey){
 }
 
 // モーション情報をセットする
-bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String poseName, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime, String motionNameTurn){
+bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String poseName, int moveTime, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime, String motionNameTurn){
   // JsonObject motionObj;
   // getMotionJson(motionKey, index, &motionObj);
   // serializeJsonPretty(motionObj, Serial);
@@ -204,7 +230,11 @@ bool avatarTranstexhterJsonCore::setMotion(String motionKey, int index, String p
     JsonObject updateObj = updateMotion[MOTION_VALUE_KEY].as<JsonObject>();
     updateObj[MOTION_POSE_KEY] = poseName;
     updateObj[MOVE_TIME_KEY] = moveTime;
-    updateObj[EYE_TYPE_KEY] = eyeType;
+    updateObj[PUPIL_TYPE_L_KEY] = pupilTypeL;
+    updateObj[PUPIL_TYPE_R_KEY] = pupilTypeR;
+    updateObj[EYELID_TYPE_L_KEY] = eyelidTypeL;
+    updateObj[EYELID_TYPE_R_KEY] = eyelidTypeR;
+    updateObj.remove(OLD_EYE_TYPE_KEY);
     updateObj[BLINK_EYE_KEY] = blinkEyeTime;
     updateObj[MOUTH_TYPE_KEY] = mouthType;
     updateObj[BLINK_MOUTH_KEY] = blinkMouthTime;
@@ -236,18 +266,51 @@ int avatarTranstexhterJsonCore::getMotionMoveTime(String motionKey, int index){
   }
 }
 
-// 実行アイモーションを取得する
-int avatarTranstexhterJsonCore::getMotionEyeType(String motionKey, int index){
+// 左目の瞳孔画像の種類を取得する
+int avatarTranstexhterJsonCore::getMotionPupilTypeL(String motionKey, int index){
   JsonObject getInfo;
   if(getMotionJson(motionKey, index, &getInfo) == true){
     JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
-    return resultObj[EYE_TYPE_KEY].as<int>();
+    return resultObj[PUPIL_TYPE_L_KEY].as<int>();
   }else{
     return 0;
   }
 }
 
-// 瞬き実行周期時間を取得する
+// 右目の瞳孔画像の種類を取得する
+int avatarTranstexhterJsonCore::getMotionPupilTypeR(String motionKey, int index){
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[PUPIL_TYPE_R_KEY].as<int>();
+  }else{
+    return 0;
+  }
+}
+
+// 左目の瞼画像の種類を取得する
+int avatarTranstexhterJsonCore::getMotionEyelidTypeL(String motionKey, int index){
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[EYELID_TYPE_L_KEY].as<int>();
+  }else{
+    return 0;
+  }
+}
+
+// 右目の瞼画像の種類を取得する
+int avatarTranstexhterJsonCore::getMotionEyelidTypeR(String motionKey, int index){
+  JsonObject getInfo;
+  if(getMotionJson(motionKey, index, &getInfo) == true){
+    JsonObject resultObj = getInfo[MOTION_VALUE_KEY].as<JsonObject>();
+    return resultObj[EYELID_TYPE_R_KEY].as<int>();
+  }else{
+    return 0;
+  }
+}
+
+// 瞬きを発生するまでの時間(ms)を取得する
 int avatarTranstexhterJsonCore::getMotionEyeBlinkTime(String motionKey, int index){
   JsonObject getInfo;
   if(getMotionJson(motionKey, index, &getInfo) == true){
@@ -299,7 +362,7 @@ int avatarTranstexhterJsonCore::wholeMotion(std::vector<String>& motionKeys){
 }
 
 // モーションを追加する
-bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, String finishPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, String finishPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime){
   // 指定されたモーションが「POSE」の場合はstartもしくはfinishのポーズとして指定できない
   if(getPoseType(startPose) == POSE){
     return false;
@@ -308,17 +371,17 @@ bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, 
     return false;
   }
   // JSONオブジェクトにモーションを追加
-  addMotionJson(motionKey, startPose, eyeType, blinkEyeTime, mouthType, blinkMouthTime);
+  addMotionJson(motionKey, startPose, pupilTypeL, pupilTypeR, eyelidTypeL, eyelidTypeR, blinkEyeTime, mouthType, blinkMouthTime);
   // 最後尾のモーションポーズを編集
-  setMotion(motionKey, 1, finishPose, getMotionMoveTime(motionKey, 0), eyeType, blinkEyeTime, mouthType, blinkMouthTime);
+  setMotion(motionKey, 1, finishPose, getMotionMoveTime(motionKey, 0), pupilTypeL, pupilTypeR, eyelidTypeL, eyelidTypeR, blinkEyeTime, mouthType, blinkMouthTime);
   return true;
 }
 
-bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
-  return addMotions(motionKey, startPose, startPose, eyeType, blinkEyeTime, mouthType, blinkMouthTime);
+bool avatarTranstexhterJsonCore::addMotions(String motionKey, String startPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime){
+  return addMotions(motionKey, startPose, startPose, pupilTypeL, pupilTypeR, eyelidTypeL, eyelidTypeR, blinkEyeTime, mouthType, blinkMouthTime);
 }
 
-bool avatarTranstexhterJsonCore::addMotion(String motionKey, String poseName, int index, int moveTime, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+bool avatarTranstexhterJsonCore::addMotion(String motionKey, String poseName, int index, int moveTime, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime){
   if(isMotion(motionKey) == false){
     return false;
   }
@@ -343,7 +406,7 @@ bool avatarTranstexhterJsonCore::addMotion(String motionKey, String poseName, in
       editObj = editMotion[i - 1].as<JsonObject>();
     }
     String motionNameTurn = motionKey + (String)editMotion.size();
-    setMotion(motionKey, index, poseName, moveTime, eyeType, blinkEyeTime, mouthType, blinkMouthTime, motionNameTurn);
+    setMotion(motionKey, index, poseName, moveTime, pupilTypeL, pupilTypeR, eyelidTypeL, eyelidTypeR, blinkEyeTime, mouthType, blinkMouthTime, motionNameTurn);
     return true;
   }else{
     return false;
@@ -405,10 +468,12 @@ void avatarTranstexhterJsonCore::addPoseJson(String poseeName, poseType type){
     poseValueObj[jointKeys[i] + POSE_ENABLE_KEY] = int(true);
   }
   poseValueObj[POSE_TYPE_KEY] = type;
+  // 目の明るさ
+  poseValueObj[EYE_BRIGHTNESS_KEY] = EYE_BRIGHTNESS_DEFAULT;
 }
 
 // モーション用JSONデータの追加
-void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPose, int eyeType, int blinkEyeTime, int mouthType, int blinkMouthTime){
+void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPose, int pupilTypeL, int pupilTypeR, int eyelidTypeL, int eyelidTypeR, int blinkEyeTime, int mouthType, int blinkMouthTime){
   JsonArray motionsArray = saveJsonDoc[MOTION_KEY];
   JsonObject motionObj = motionsArray.add<JsonObject>();
   motionObj[MOTION_NAME_KEY] = motionKey;
@@ -420,7 +485,10 @@ void avatarTranstexhterJsonCore::addMotionJson(String motionKey, String startPos
     JsonObject motionValue = stepObj[MOTION_VALUE_KEY].to<JsonObject>();
     motionValue[MOTION_POSE_KEY] = startPose;
     motionValue[MOVE_TIME_KEY] = 0;
-    motionValue[EYE_TYPE_KEY] = eyeType;
+    motionValue[PUPIL_TYPE_L_KEY] = pupilTypeL;
+    motionValue[PUPIL_TYPE_R_KEY] = pupilTypeR;
+    motionValue[EYELID_TYPE_L_KEY] = eyelidTypeL;
+    motionValue[EYELID_TYPE_R_KEY] = eyelidTypeR;
     motionValue[BLINK_EYE_KEY] = blinkEyeTime;
     motionValue[MOUTH_TYPE_KEY] = mouthType;
     motionValue[BLINK_MOUTH_KEY] = blinkMouthTime;
