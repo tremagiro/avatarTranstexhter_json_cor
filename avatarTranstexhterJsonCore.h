@@ -87,6 +87,8 @@ class avatarTranstexhterJsonCore{
     bool addPose(String poseKey, poseType type = POSE);
     // ポーズを削除する
     bool removePose(String poseKey);
+    // ポーズ名を変更する(モーションのステップが参照しているポーズ名も書き換える)
+    bool renamePose(String oldPoseKey, String newPoseKey);
     // モーションの有無
     bool isMotion(String motionKey);
     // モーション情報をセットする
@@ -122,6 +124,8 @@ class avatarTranstexhterJsonCore{
     bool removeMotion(String motionKey, int index);
     // モーションを削除する
     void removeMotions(String motionKey);
+    // モーション名を変更する(モーション名で始まるステップ名も書き換える)
+    bool renameMotion(String oldMotionKey, String newMotionKey);
     // ポーズ用JSONデータを追加
     void addPoseJson(String poseeName, poseType type);
     // モーション用JSONデータを追加

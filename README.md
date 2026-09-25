@@ -138,6 +138,11 @@ bool addPose(String poseKey, poseType type = POSE)
 ```
 bool removePose(String poseKey)
 ```
+### renamePose
+ポーズ名を変更する。モーションのステップが変更前のポーズ名を参照している場合（"motionPose"）は、新しいポーズ名に書き換える。変更前のポーズがない場合、変更後の名前が空の場合、変更後の名前のポーズが既にある場合はfalseを返し、何も変更しない。ポーズタイプ（ROOTなど）は変わらない。
+```
+bool renamePose(String oldPoseKey, String newPoseKey)
+```
 
 ### isMotion
 指定したモーション名の情報があるかどうかを判定する。
@@ -216,6 +221,11 @@ bool removeMotion(String motionKey, int index);
 指定したモーション削除する。
 ```
 void removeMotions(String motionKey)
+```
+### renameMotion
+モーション名を変更する。モーション名で始まるステップ名（"motionNameTurn"。例: "xxxStart"）は、先頭のモーション名を新しい名前に置き換える。変更前のモーションがない場合、変更後の名前が空の場合、変更後の名前のモーションが既にある場合はfalseを返し、何も変更しない。
+```
+bool renameMotion(String oldMotionKey, String newMotionKey)
 ```
 ### addPoseJson
 ポーズ用のJSON要素を新規作成し、保持するJSONオブジェクトに追加する。既存ポーズの重複チェックは行わないため、通常はaddPose・setPoseの利用を推奨する。

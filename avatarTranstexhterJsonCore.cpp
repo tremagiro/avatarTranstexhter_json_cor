@@ -194,6 +194,29 @@ bool avatarTranstexhterJsonCore::removePose(String poseKey){
   return false;
 }
 
+// ポーズ名を変更する(モーションのステップが参照しているポーズ名も書き換える)
+bool avatarTranstexhterJsonCore::renamePose(String oldPoseKey, String newPoseKey){
+  // 変更前のポーズがない・変更後の名前が空・同名のポーズが既にある場合は変更しない
+  if(isPose(oldPoseKey) == false || newPoseKey.length() == 0 || isPose(newPoseKey) == true){
+    return false;
+  }
+  JsonObject poseObj;
+  getPoseJson(oldPoseKey, &poseObj);
+  poseObj[POSE_NAME_KEY] = newPoseKey;
+  // モーションのステップが参照しているポーズ名を書き換える
+  JsonArray motionArray = saveJsonDoc[MOTION_KEY];
+  for(JsonObject motionObj : motionArray){
+    JsonArray stepArray = motionObj[MOTION_ARRAY_KEY].as<JsonArray>();
+    for(JsonObject stepObj : stepArray){
+      JsonObject valueObj = stepObj[MOTION_VALUE_KEY].as<JsonObject>();
+      if(valueObj[MOTION_POSE_KEY].as<String>() == oldPoseKey){
+        valueObj[MOTION_POSE_KEY] = newPoseKey;
+      }
+    }
+  }
+  return true;
+}
+
 // モーションの有無
 bool avatarTranstexhterJsonCore::isMotion(String motionKey){
   JsonArray obj;
@@ -439,6 +462,31 @@ void avatarTranstexhterJsonCore::removeMotions(String motionKey){
       }
     }
   }
+}
+
+// モーション名を変更する(モーション名で始まるステップ名も書き換える)
+bool avatarTranstexhterJsonCore::renameMotion(String oldMotionKey, String newMotionKey){
+  // 変更前のモーションがない・変更後の名前が空・同名のモーションが既にある場合は変更しない
+  if(isMotion(oldMotionKey) == false || newMotionKey.length() == 0 || isMotion(newMotionKey) == true){
+    return false;
+  }
+  JsonArray motionArray = saveJsonDoc[MOTION_KEY];
+  for(JsonObject motionObj : motionArray){
+    if(motionObj[MOTION_NAME_KEY].as<String>() != oldMotionKey){
+      continue;
+    }
+    motionObj[MOTION_NAME_KEY] = newMotionKey;
+    // ステップ名は「モーション名＋Start/番号/Finish」のため、先頭のモーション名を置き換える
+    JsonArray stepArray = motionObj[MOTION_ARRAY_KEY].as<JsonArray>();
+    for(JsonObject stepObj : stepArray){
+      String turnName = stepObj[MOTION_NAME_TURN_KEY].as<String>();
+      if(turnName.startsWith(oldMotionKey) == true){
+        stepObj[MOTION_NAME_TURN_KEY] = newMotionKey + turnName.substring(oldMotionKey.length());
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 // JSONファイル作成

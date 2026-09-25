@@ -200,6 +200,22 @@ void setup() {
     Serial.println(s);
   }
   Serial.println("###################################");
+  // モーション名変更テスト(モーション名で始まるステップ名も変わる)
+  Serial.println("renameMotion test#######################");
+  Serial.printf("addMotion0 -> walk : %d\n", tester.renameMotion("addMotion0", "walk"));
+  Serial.printf("none -> x(存在しない) : %d\n", tester.renameMotion("none", "x"));
+  Serial.printf("walk ポーズ総数:%d\n", tester.getMotionIndexes("walk"));
+  Serial.println("###################################");
+  // ポーズ名変更テスト(モーションのステップが参照しているポーズ名も変わる)
+  Serial.println("renamePose test#######################");
+  Serial.printf("add0 -> add0renamed : %d\n", tester.renamePose("add0", "add0renamed"));
+  Serial.printf("root -> add3(同名あり) : %d\n", tester.renamePose("root", "add3"));
+  Serial.printf("none -> x(存在しない) : %d\n", tester.renamePose("none", "x"));
+  Serial.printf("walk step0 motionPose:%s\n", tester.getMotionPoseName("walk", 0).c_str());
+  // モーション名・ステップ名・ステップが参照するポーズ名の変更をまとめて確認する
+  serializeJsonPretty(tester.getJsonDocument(), Serial);
+  Serial.println();
+  Serial.println("###################################");
 
 }
 
